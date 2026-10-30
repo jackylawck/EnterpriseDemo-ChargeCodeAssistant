@@ -1,0 +1,35 @@
+name: Enterprise Security Scan (SAST)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # 註：已移除 cron 定期排程，節省 Demo 專案的 GitHub Actions 運算額度
+
+jobs:
+  bandit:
+    name: Python Vulnerability Scanner
+    permissions:
+      contents: read           # 允許 Checkout 程式碼
+      security-events: write   # 允許將掃描結果 (SARIF) 上傳至 GitHub Security 標籤
+      actions: read            # 供 Private Repo 讀取狀態使用
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🛡️ Run Bandit Static Analysis (SAST)
+        uses: shundor/python-bandit-scan@ab1d87dfccc5a0ffab88be3aaac6ffe35c10d6cd
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 企業級設定：不強制中斷佈署 (Demo 用途)，但將結果上傳供合規檢視
+          exit_zero: true
+          
+          # 精準過濾：只報告「中/高風險」且「高可信度」的漏洞，保持 Security Tab 乾淨專業
+          level: MEDIUM
+          confidence: HIGH
+          
+          # 排除虛擬環境與快取資料夾
+          excluded_paths: "venv,.venv,__pycache__,.git"
