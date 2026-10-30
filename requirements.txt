@@ -1,0 +1,19 @@
+# ==========================================
+# Enterprise Smart Charge Code Assistant (Demo)
+# 系統運行環境依賴清單 (Requirements)
+# ==========================================
+
+# --- 1. Web UI & Application Framework ---
+streamlit
+
+# --- 2. Data Processing & Document Parsing ---
+# 用於處理結構化 Excel 題庫與非結構化文件
+pandas
+openpyxl
+pypdf
+
+# --- 3. AI, RAG & Local Vector Database ---
+# 用於本地語意嵌入 (Embeddings) 與向量檢索，確保零數據外流
+langchain-community
+sentence-transformers
+faiss-cpu
