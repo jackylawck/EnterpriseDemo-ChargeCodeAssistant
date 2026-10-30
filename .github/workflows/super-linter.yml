@@ -1,0 +1,39 @@
+name: "Enterprise Code Quality Linter"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-lint:
+    name: Code Standard & Quality Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      statuses: write # 允許 Super-linter 更新 Commit 的狀態檢查
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          # 必須設定為 0，Super-linter 才能完整讀取 Git 歷史來比對有改動的檔案
+          fetch-depth: 0
+
+      - name: 🔎 Run Enterprise Super-Linter
+        # 使用官方最新維護的路徑
+        uses: super-linter/super-linter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          DEFAULT_BRANCH: "main"
+          
+          # 企業級精準優化：只針對本專案使用的核心語言開啟 Linting，大幅節省時間並避免誤判
+          VALIDATE_PYTHON_FLAKE8: true
+          VALIDATE_PYTHON_BLACK: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_YAML: true
+          
+          # 將警告視為純提示，不強制中斷 CI 流程 (視你的管治嚴格度可改為 false)
+          DISABLE_ERRORS: false
