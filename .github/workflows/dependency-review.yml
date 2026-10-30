@@ -1,0 +1,31 @@
+name: "Enterprise Dependency Security Review"
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+  # 允許 GitHub Bot 在 PR 中自動留言產出安全審查報告
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Supply Chain Vulnerability Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🛡️ Run Dependency Security Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # 企業級管治與展示設定：
+          # 1. 永遠在 PR 中留言產出依賴套件的安全審查報告 (極佳的 Demo 展示效果)
+          comment-summary-in-pr: always
+          
+          # 2. 強制阻擋機制：若發現「高風險 (high)」或以上的漏洞，強制阻擋 PR 合併
+          fail-on-severity: high
+          
+          # 3. 企業法務合規：拒絕具備高度傳染性或不符合企業規範的開源授權條款
+          deny-licenses: AGPL-3.0, GPL-3.0
