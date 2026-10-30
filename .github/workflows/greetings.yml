@@ -1,0 +1,29 @@
+name: "Enterprise Contributor Greetings"
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  greeting:
+    name: Welcome New Contributors
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - name: 👋 Greet First-Time Contributors
+      uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: |
+          👋 Welcome to the **Enterprise Demo System**! Thank you for opening your first issue. 
+          
+          As this project demonstrates AI governance and zero-data-retention architectures, please ensure **no sensitive information or PII (Personally Identifiable Information)** is included in your report. Our maintainers will review your submission shortly.
+          
+        pr-message: |
+          🎉 Thank you for your first Pull Request to the **Enterprise Demo System**! We greatly appreciate your contribution to this AI governance and compliance showcase. 
+          
+          Before your code is reviewed, please ensure your changes pass our automated DevSecOps pipelines (CodeQL, SAST, and Dependency Review). A maintainer will be with you soon!
