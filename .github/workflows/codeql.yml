@@ -1,0 +1,42 @@
+name: "Enterprise CodeQL Security Scan"
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  # 註：已移除 cron 定期排程，節省 Demo 專案的 GitHub Actions 運算額度
+
+jobs:
+  analyze:
+    name: Advanced CodeQL Analysis (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: python
+            build-mode: none
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+
+    - name: ⚙️ Initialize CodeQL Framework
+      uses: github/codeql-action/init@v4
+      with:
+        languages: ${{ matrix.language }}
+        build-mode: ${{ matrix.build-mode }}
+        # 企業級優化：啟用最高級別的「安全與程式碼品質」深度掃描規則庫
+        queries: security-and-quality
+
+    - name: 🔍 Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4
+      with:
+        category: "/language:${{matrix.language}}"
