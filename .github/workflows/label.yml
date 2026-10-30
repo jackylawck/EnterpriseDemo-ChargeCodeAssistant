@@ -1,0 +1,21 @@
+name: "Enterprise Automated PR Triage"
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  triage:
+    name: Auto-Label Pull Requests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+    - name: 🏷️ Apply Labels Based on Modified Paths
+      uses: actions/labeler@v5
+      with:
+        repo-token: "${{ secrets.GITHUB_TOKEN }}"
+        # 企業級專案管理：若 PR 中的檔案改動被撤銷，自動移除對應標籤
+        sync-labels: true
